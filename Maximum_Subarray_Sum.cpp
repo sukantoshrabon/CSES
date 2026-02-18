@@ -6,17 +6,17 @@ using ll = long long;
 void solve() {
     int n;
     cin >> n;
-    vector<ll> a(n);
-    for (ll &x : a) cin >> x;
-    ll steps = 0;
-    for (int i = 1; i < n; ++i) {
-        if (a[i] < a[i - 1]) {
-            steps += (a[i - 1] - a[i]);
-            a[i] = a[i - 1];
-        }
+    int a[n];
+    for(int i=0; i<n; i++){
+        cin >> a[i];
     }
-
-    cout << steps << endl;
+    ll ans = INT_MIN;
+    ll temp = INT_MIN;
+    for(int i=0; i<n; i++){
+        temp = max((ll)a[i], a[i] + temp);
+        ans = max (ans , temp);
+    }
+    cout << ans << endl;
 }
 
 int main() {
@@ -31,5 +31,3 @@ int main() {
     }
     return 0;
 }
-
-
