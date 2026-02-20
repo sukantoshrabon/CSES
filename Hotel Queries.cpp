@@ -2,9 +2,8 @@
 using namespace std;
 #define endl '\n'
 using ll = long long;
-const int N = 1e6 + 10;
+const int N = 2e6 + 10;
 int arr[N];
-
 
 struct st {
   ll segT[N * 4];
@@ -14,7 +13,7 @@ struct st {
     memset( segT, 0, sizeof(segT) );
   }
   inline void pull(int node, int lc, int rc){     
-    segT[node] = min(segT[lc], segT[rc]);
+    segT[node] = max(segT[lc], segT[rc]);
   }
   void build(int node, int b, int e){
     if( b == e ){
@@ -28,43 +27,41 @@ struct st {
     pull( node, lc, rc );
   }
   void upd(int node, int b, int e, int i, int val){
-    if( b > i || e < i ) {return;}
-    if( b == e && e == i ){
+    if( b == e ){
       segT[node] = val;
       return;
     }
     int mid = (b + e) >> 1;
     int lc = (node << 1), rc = (node << 1) + 1;
-    upd( lc, b, mid, i, val);
-    upd( rc, mid + 1, e, i, val);
+    if(i <= mid )
+        upd( lc, b, mid, i, val); 
+    else  
+        upd( rc, mid + 1, e, i, val);
     pull( node, lc, rc );
   }
-  ll query(int node, int b, int e, int i, int j){
-    if( b > j || e < i ) {return inf;}      
-    if( b >= i && e <= j ) {return segT[node];}
+  ll query(int node, int b, int e, int x){     
+    if(segT[node] < x ) return 0;
+    if(b == e) return b;
     int mid = (b + e) >> 1;
     int lc = (node << 1), rc = (node << 1) + 1;
-    ll L = query(lc, b, mid, i, j);
-    ll R = query(rc, mid + 1, e, i, j);
-    return min(L, R);       
+    if(segT[lc] >= x)
+        return query(lc, b, mid, x);
+    else 
+        return query(rc, mid + 1, e, x);      
   }
 } segT;
 
 void solve() {
-    ll n,q; cin >> n >> q;
-    for(int i=1; i<=n; i++){
-        cin >> arr[i];
-    }
+    int n,m; cin >> n >> m;
+    for(int i=1; i<=n; i++) cin >> arr[i];
     segT.build(1,1,n);
-    while(q--){
-        int type; cin >> type;
-        if(type == 1){
-            ll i, val; cin >> i >> val;
-            segT.upd(1,1,n,i,val);
-        } else {
-            ll l,r; cin >> l >> r;
-            ll ans = segT.query(1,1,n,l,r);
-            cout << ans << endl;
+    while(m--){
+        int x; cin >> x;
+        int room = segT.query(1,1,n,x);
+        cout << room << " ";
+        if(room != 0){
+            arr[room] -= x;
+            segT.upd(1,1,n,room,arr[room]);
         }
     }
 }

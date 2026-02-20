@@ -5,7 +5,7 @@ using ll = long long;
 const int N = 1e6 + 10;
 int arr[N];
 
-
+// Segment Tree for max. pull,upd,query....
 struct st {
   ll segT[N * 4];
   static const int inf = 1e9;
@@ -57,15 +57,9 @@ void solve() {
     }
     segT.build(1,1,n);
     while(q--){
-        int type; cin >> type;
-        if(type == 1){
-            ll i, val; cin >> i >> val;
-            segT.upd(1,1,n,i,val);
-        } else {
-            ll l,r; cin >> l >> r;
-            ll ans = segT.query(1,1,n,l,r);
-            cout << ans << endl;
-        }
+        ll l,r; cin >> l >> r;
+        ll ans = segT.query(1,1,n,l,r);
+         cout << ans << endl;
     }
 }
 

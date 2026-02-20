@@ -2,9 +2,8 @@
 using namespace std;
 #define endl '\n'
 using ll = long long;
-const int N = 1e6 + 10;
+const int N = 2e5 + 10;
 int arr[N];
-
 
 struct st {
   ll segT[N * 4];
@@ -14,7 +13,7 @@ struct st {
     memset( segT, 0, sizeof(segT) );
   }
   inline void pull(int node, int lc, int rc){     
-    segT[node] = min(segT[lc], segT[rc]);
+    segT[node] = segT[lc] + segT[rc];
   }
   void build(int node, int b, int e){
     if( b == e ){
@@ -30,7 +29,7 @@ struct st {
   void upd(int node, int b, int e, int i, int val){
     if( b > i || e < i ) {return;}
     if( b == e && e == i ){
-      segT[node] = val;
+      segT[node] += val;
       return;
     }
     int mid = (b + e) >> 1;
@@ -40,13 +39,13 @@ struct st {
     pull( node, lc, rc );
   }
   ll query(int node, int b, int e, int i, int j){
-    if( b > j || e < i ) {return inf;}      
+    if( b > j || e < i ) {return 0;}      
     if( b >= i && e <= j ) {return segT[node];}
     int mid = (b + e) >> 1;
     int lc = (node << 1), rc = (node << 1) + 1;
     ll L = query(lc, b, mid, i, j);
     ll R = query(rc, mid + 1, e, i, j);
-    return min(L, R);       
+    return L + R;       
   }
 } segT;
 
@@ -59,10 +58,18 @@ void solve() {
     while(q--){
         int type; cin >> type;
         if(type == 1){
-            ll i, val; cin >> i >> val;
-            segT.upd(1,1,n,i,val);
-        } else {
-            ll l,r; cin >> l >> r;
+            ll i; cin >> i; i++;
+            cout << arr[i] << endl;
+            segT.upd(1,1,n,i,-arr[i]);
+            arr[i] = 0;
+            
+        }else if(type == 2){
+            ll i,v; cin >> i >> v; i++;
+            segT.upd(1,1,n,i,v);
+            arr[i] += v;
+        }
+         else {
+            ll l,r; cin >> l >> r; l++;r++;
             ll ans = segT.query(1,1,n,l,r);
             cout << ans << endl;
         }
@@ -71,9 +78,11 @@ void solve() {
 
 int main() {
     ios::sync_with_stdio(false);cin.tie(0);
-    int t = 1;
-    // cin >> t;
+    int t = 1,tc = 0;
+    cin >> t;
     while (t--) {
+        tc++;
+        cout << "Case " << tc << ":" << endl;
         solve();
     }
     return 0;
